@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sweet Blliss Menu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #d6eaf8;
+            color: #333;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2874a6;
+        }
+        .item {
+            margin-bottom: 30px;
+        }
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1b4f72;
+        }
+        .price {
+            font-size: 18px;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        button {
+            background-color: #2874a6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #1b4f72;
+        }
+        .remove-btn {
+            background-color: #e74c3c;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sweet Blliss Menu</h1>
+        
+        <div class="item">
+            <p class="name">🍓 Tentação de Morango e Brownie / Strawberry Brownie Bliss</p>
+            <p class="price">$22</p>
+            <p>Brigadeiro cremoso de Ninho, brigadeiro cremoso de chocolate, brownie de chocolate, morango e Nutella.</p>
+            <p><em>Creamy Ninho brigadeiro, creamy chocolate brigadeiro, chocolate brownie, strawberries, and Nutella.</em></p>
+            <button onclick="addToCart('Tentação de Morango e Brownie', 22)">Adicionar ao Pedido</button>
+        </div>
+        
+        <div class="item">
+            <p class="name">🍫 Paixão de Chocolate e Maracujá / Chocolate Passion Delight</p>
+            <p class="price">$20</p>
+            <p>Brigadeiro cremoso de chocolate, mousse de maracujá, calda de maracujá e brownie.</p>
+            <p><em>Creamy chocolate brigadeiro, passion fruit mousse, passion fruit syrup, and brownie.</em></p>
+            <button onclick="addToCart('Paixão de Chocolate e Maracujá', 20)">Adicionar ao Pedido</button>
+        </div>
+        
+        <div class="item">
+            <p class="name">🍫 Explosão Kinder Bueno / Kinder Bueno Explosion</p>
+            <p class="price">$22</p>
+            <p>Creme de chocolate, mousse de Ninho, Nutella e biscoito Kinder Bueno.</p>
+            <p><em>Chocolate cream, Ninho mousse, Nutella, and Kinder Bueno biscuit.</em></p>
+            <button onclick="addToCart('Explosão Kinder Bueno', 22)">Adicionar ao Pedido</button>
+        </div>
+        
+        <div class="item">
+            <p class="name">🥭 Doce Encanto de Maracujá e Ninho / Passion Fruit Dream</p>
+            <p class="price">$20</p>
+            <p>Calda de maracujá, brownie, brigadeiro cremoso de Ninho, mousse de maracujá e chantininho.</p>
+            <p><em>Passion fruit syrup, brownie, creamy Ninho brigadeiro, passion fruit mousse, and Chantilly.</em></p>
+            <button onclick="addToCart('Doce Encanto de Maracujá e Ninho', 20)">Adicionar ao Pedido</button>
+        </div>
+        
+        <div class="item">
+            <p class="name">🍋 Delícia de Limão / Zesty Lemon Treat</p>
+            <p class="price">$20</p>
+            <p>Base de biscoito de maisena, mousse de limão e chantininho.</p>
+            <p><em>Crushed biscuit base, lemon mousse, and Chantilly.</em></p>
+            <button onclick="addToCart('Delícia de Limão', 20)">Adicionar ao Pedido</button>
+        </div>
+        
+        <h2>🛒 Seu Pedido</h2>
+        <ul id="cart"></ul>
+        <p id="total-price"><strong>Total: $0</strong></p>
+        <button onclick="checkout()">Finalizar Pedido</button>
+    </div>
+
+    <script>
+        let cart = [];
+
+        function addToCart(item, price) {
+            let existingItem = cart.find(product => product.item === item);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ item, price, quantity: 1 });
+            }
+            updateCart();
+        }
+
+        function removeFromCart(index) {
+            if (cart[index].quantity > 1) {
+                cart[index].quantity -= 1;
+            } else {
+                cart.splice(index, 1);
+            }
+            updateCart();
+        }
+
+        function updateCart() {
+            let cartList = document.getElementById("cart");
+            cartList.innerHTML = "";
+            let total = 0;
+            cart.forEach((product, index) => {
+                let li = document.createElement("li");
+                li.textContent = `${product.quantity}x ${product.item} - $${product.price * product.quantity}`;
+                total += product.price * product.quantity;
+                
+                let removeBtn = document.createElement("button");
+                removeBtn.textContent = "Remover";
+                removeBtn.classList.add("remove-btn");
+                removeBtn.onclick = () => removeFromCart(index);
+                
+                li.appendChild(removeBtn);
+                cartList.appendChild(li);
+            });
+            document.getElementById("total-price").innerHTML = `<strong>Total: $${total}</strong>`;
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert("Seu carrinho está vazio!");
+                return;
+            }
+            let message = "Olá! Gostaria de fazer um pedido:\n\n";
+            cart.forEach(product => {
+                message += `- ${product.quantity}x ${product.item}: $${product.price * product.quantity}\n`;
+            });
+            message += `\nTotal: $${cart.reduce((sum, product) => sum + product.price * product.quantity, 0)}`;
+            let encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/17743407226?text=${encodedMessage}`, "_blank");
+        }
+    </script>
+</body>
+</html>
