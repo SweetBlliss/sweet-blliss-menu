@@ -59,54 +59,40 @@
     <div class="container">
         <h1>Sweet Blliss Menu</h1>
         
-        <div class="item">
-            <p class="name">🍓 Tentação de Morango e Brownie / Strawberry Brownie Bliss</p>
-            <p class="price">$22</p>
-            <p>Brigadeiro cremoso de Ninho, brigadeiro cremoso de chocolate, brownie de chocolate, morango e Nutella.</p>
-            <p><em>Creamy Ninho brigadeiro, creamy chocolate brigadeiro, chocolate brownie, strawberries, and Nutella.</em></p>
-            <button onclick="addToCart('Tentação de Morango e Brownie', 22)">Adicionar ao Pedido</button>
-        </div>
-        
-        <div class="item">
-            <p class="name">🍫 Paixão de Chocolate e Maracujá / Chocolate Passion Delight</p>
-            <p class="price">$20</p>
-            <p>Brigadeiro cremoso de chocolate, mousse de maracujá, calda de maracujá e brownie.</p>
-            <p><em>Creamy chocolate brigadeiro, passion fruit mousse, passion fruit syrup, and brownie.</em></p>
-            <button onclick="addToCart('Paixão de Chocolate e Maracujá', 20)">Adicionar ao Pedido</button>
-        </div>
-        
-        <div class="item">
-            <p class="name">🍫 Explosão Kinder Bueno / Kinder Bueno Explosion</p>
-            <p class="price">$22</p>
-            <p>Creme de chocolate, mousse de Ninho, Nutella e biscoito Kinder Bueno.</p>
-            <p><em>Chocolate cream, Ninho mousse, Nutella, and Kinder Bueno biscuit.</em></p>
-            <button onclick="addToCart('Explosão Kinder Bueno', 22)">Adicionar ao Pedido</button>
-        </div>
-        
-        <div class="item">
-            <p class="name">🥭 Doce Encanto de Maracujá e Ninho / Passion Fruit Dream</p>
-            <p class="price">$20</p>
-            <p>Calda de maracujá, brownie, brigadeiro cremoso de Ninho, mousse de maracujá e chantininho.</p>
-            <p><em>Passion fruit syrup, brownie, creamy Ninho brigadeiro, passion fruit mousse, and Chantilly.</em></p>
-            <button onclick="addToCart('Doce Encanto de Maracujá e Ninho', 20)">Adicionar ao Pedido</button>
-        </div>
-        
-        <div class="item">
-            <p class="name">🍋 Delícia de Limão / Zesty Lemon Treat</p>
-            <p class="price">$20</p>
-            <p>Base de biscoito de maisena, mousse de limão e chantininho.</p>
-            <p><em>Crushed biscuit base, lemon mousse, and Chantilly.</em></p>
-            <button onclick="addToCart('Delícia de Limão', 20)">Adicionar ao Pedido</button>
-        </div>
+        <div id="menu"></div>
         
         <h2>🛒 Seu Pedido</h2>
         <ul id="cart"></ul>
+        <p><strong>Gorjeta (Tip):</strong> $<input type="number" id="tip" value="0" min="0" step="1" oninput="updateCart()"></p>
         <p id="total-price"><strong>Total: $0</strong></p>
         <button onclick="checkout()">Finalizar Pedido</button>
     </div>
 
     <script>
         let cart = [];
+        const menuItems = [
+            { name: "Tentação de Morango e Brownie", price: 22, description: "Brigadeiro cremoso de Ninho, brigadeiro cremoso de chocolate, brownie de chocolate, morango e Nutella.", english: "Strawberry Brownie Bliss - Creamy Ninho brigadeiro, creamy chocolate brigadeiro, chocolate brownie, strawberries, and Nutella." },
+            { name: "Paixão de Chocolate e Maracujá", price: 20, description: "Brigadeiro cremoso de chocolate, mousse de maracujá, calda de maracujá e brownie.", english: "Chocolate Passion Delight - Creamy chocolate brigadeiro, passion fruit mousse, passion fruit syrup, and brownie." },
+            { name: "Explosão Kinder Bueno", price: 22, description: "Creme de chocolate, mousse de Ninho, Nutella e biscoito Kinder Bueno.", english: "Kinder Bueno Explosion - Chocolate cream, Ninho mousse, Nutella, and Kinder Bueno biscuit." },
+            { name: "Doce Encanto de Maracujá e Ninho", price: 20, description: "Calda de maracujá, brownie, brigadeiro cremoso de Ninho, mousse de maracujá e chantininho.", english: "Passion Fruit Dream - Passion fruit syrup, brownie, creamy Ninho brigadeiro, passion fruit mousse, and Chantilly." },
+            { name: "Delícia de Limão", price: 20, description: "Base de biscoito de maisena, mousse de limão e chantininho.", english: "Zesty Lemon Treat - Crushed biscuit base, lemon mousse, and Chantilly." }
+        ];
+        
+        function renderMenu() {
+            let menuDiv = document.getElementById("menu");
+            menuDiv.innerHTML = "";
+            menuItems.forEach(item => {
+                menuDiv.innerHTML += `
+                    <div class='item'>
+                        <p class='name'>🍰 ${item.name} / ${item.english.split(" - ")[0]}</p>
+                        <p class='price'>$${item.price}</p>
+                        <p>${item.description}</p>
+                        <p><em>${item.english.split(" - ")[1]}</em></p>
+                        <button onclick="addToCart('${item.name}', ${item.price})">Adicionar ao Pedido</button>
+                    </div>
+                `;
+            });
+        }
 
         function addToCart(item, price) {
             let existingItem = cart.find(product => product.item === item);
@@ -131,10 +117,10 @@
             let cartList = document.getElementById("cart");
             cartList.innerHTML = "";
             let total = 0;
+            
             cart.forEach((product, index) => {
                 let li = document.createElement("li");
-                li.textContent = `${product.quantity}x ${product.item} - $${product.price * product.quantity}`;
-                total += product.price * product.quantity;
+                li.textContent = `${product.quantity}x ${product.item} - $${(product.price * product.quantity).toFixed(2)}`;
                 
                 let removeBtn = document.createElement("button");
                 removeBtn.textContent = "Remover";
@@ -143,8 +129,12 @@
                 
                 li.appendChild(removeBtn);
                 cartList.appendChild(li);
+                total += product.price * product.quantity;
             });
-            document.getElementById("total-price").innerHTML = `<strong>Total: $${total}</strong>`;
+            
+            let tip = parseFloat(document.getElementById("tip").value) || 0;
+            total += tip;
+            document.getElementById("total-price").innerHTML = `<strong>Total: $${total.toFixed(2)}</strong>`;
         }
 
         function checkout() {
@@ -154,12 +144,16 @@
             }
             let message = "Olá! Gostaria de fazer um pedido:\n\n";
             cart.forEach(product => {
-                message += `- ${product.quantity}x ${product.item}: $${product.price * product.quantity}\n`;
+                message += `- ${product.quantity}x ${product.item}: $${(product.price * product.quantity).toFixed(2)}\n`;
             });
-            message += `\nTotal: $${cart.reduce((sum, product) => sum + product.price * product.quantity, 0)}`;
+            let tip = parseFloat(document.getElementById("tip").value) || 0;
+            message += `\nGorjeta: $${tip.toFixed(2)}`;
+            message += `\nTotal: $${cart.reduce((sum, product) => sum + product.price * product.quantity, 0) + tip}`;
             let encodedMessage = encodeURIComponent(message);
             window.open(`https://wa.me/17743407226?text=${encodedMessage}`, "_blank");
         }
+
+        renderMenu();
     </script>
 </body>
 </html>
